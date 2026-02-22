@@ -97,3 +97,13 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# =====================================================
+# Heavy third-party asset packs (keep GitHub lightweight)
+# =====================================================
+/Assets/Abandoned_Asylum/
+
+# Optional: large raw downloads if present
+*.zip
+*.rar
+*.7z
