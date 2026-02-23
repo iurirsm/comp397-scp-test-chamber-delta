@@ -104,10 +104,10 @@ public class SCP173Controller : MonoBehaviour
 
     void KillPlayer()
     {
-        
-        // PLACEHOLDER
         Debug.Log("SCP-173 killed the player.");
-        // SceneManager.LoadScene("03_GameOver");
+
+        if (GameOverManager.Instance != null)
+            GameOverManager.Instance.TriggerGameOver();
     }
 
     void OnTriggerEnter(Collider other)

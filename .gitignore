@@ -103,7 +103,7 @@ InitTestScene*.unity*
 # =====================================================
 /Assets/Abandoned_Asylum/
 
-# Optional: large raw downloads if present
+# Large raw downloads if present
 *.zip
 *.rar
 *.7z
