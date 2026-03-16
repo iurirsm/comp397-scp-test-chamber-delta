@@ -5,6 +5,7 @@ public class PauseManager : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject minimap;
     [SerializeField] private AudioSource levelMusic;
 
     private bool isPaused;
@@ -28,7 +29,11 @@ public class PauseManager : MonoBehaviour
         if (isPaused)
         {
             Time.timeScale = 0f;
-            if (pausePanel != null) pausePanel.SetActive(true);
+            if (pausePanel != null) 
+            {
+                pausePanel.SetActive(true);
+                minimap.SetActive(false);
+            }
 
             if (levelMusic != null)
                 levelMusic.Pause();
@@ -39,7 +44,11 @@ public class PauseManager : MonoBehaviour
         else
         {
             Time.timeScale = 1f;
-            if (pausePanel != null) pausePanel.SetActive(false);
+            if (pausePanel != null)
+            {
+                pausePanel.SetActive(false);
+                minimap.SetActive(true);                
+            }
 
             if (levelMusic != null)
                 levelMusic.UnPause();

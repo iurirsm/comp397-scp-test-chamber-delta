@@ -7,6 +7,7 @@ public class GameOverManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject minimap;
 
     [Header("Audio")]
     [SerializeField] private AudioSource sfxSource;   
@@ -49,7 +50,11 @@ public class GameOverManager : MonoBehaviour
 
         // Show UI
         if (gameOverPanel != null)
+        {
             gameOverPanel.SetActive(true);
+            minimap.SetActive(false);            
+        }
+            
     }
 
     public void RestartLevel()
