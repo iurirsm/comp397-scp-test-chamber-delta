@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         IsPaused = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         SceneManager.LoadScene(menuScene);
     }
 

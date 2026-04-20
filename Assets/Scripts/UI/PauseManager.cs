@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.Events;
 
 public class PauseManager : MonoBehaviour
 {
@@ -7,6 +7,9 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject minimap;
     [SerializeField] private AudioSource levelMusic;
+
+    public UnityEvent OnPause;
+    public UnityEvent OnUnpause;
 
     private bool isPaused;
 
@@ -40,6 +43,8 @@ public class PauseManager : MonoBehaviour
 
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            
+            OnPause?.Invoke();
         }
         else
         {
@@ -55,6 +60,8 @@ public class PauseManager : MonoBehaviour
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            
+            OnUnpause?.Invoke();
         }
     }
 

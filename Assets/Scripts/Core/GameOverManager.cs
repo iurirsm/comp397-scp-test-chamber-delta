@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class GameOverManager : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class GameOverManager : MonoBehaviour
 
     [Header("Scenes (optional)")]
     [SerializeField] private string mainMenuSceneName = "01_Menu";
+
+    public UnityEvent OnGameOver;
 
     private bool isGameOver;
 
@@ -54,6 +57,8 @@ public class GameOverManager : MonoBehaviour
             gameOverPanel.SetActive(true);
             minimap.SetActive(false);            
         }
+        
+        OnGameOver?.Invoke();
             
     }
 
