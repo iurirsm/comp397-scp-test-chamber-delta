@@ -49,13 +49,13 @@ public class GameOverManager : MonoBehaviour
         Time.timeScale = 0f;
 
         // Cursor for WebGL/UI (not on Android)
-#if !UNITY_ANDROID
+// #if !UNITY_ANDROID
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-#else
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-#endif
+// #else
+//         Cursor.lockState = CursorLockMode.None;
+//         Cursor.visible = true;
+// #endif
 
         // Show UI
         if (gameOverPanel != null)

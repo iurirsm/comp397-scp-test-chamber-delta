@@ -42,6 +42,13 @@ public class PauseManager : MonoBehaviour
         if (gameOverPanel != null && gameOverPanel.activeSelf)
             return;
 
+        // Defer to next frame to avoid Input System conflicts
+        StartCoroutine(TogglePauseNextFrame());
+    }
+
+    private System.Collections.IEnumerator TogglePauseNextFrame()
+    {
+        yield return null;
         TogglePause();
     }
 
@@ -52,10 +59,17 @@ public class PauseManager : MonoBehaviour
         if (isPaused)
         {
             Time.timeScale = 0f;
-            if (pausePanel != null) 
+            if (pausePanel != null)
             {
                 pausePanel.SetActive(true);
                 minimap.SetActive(false);
+
+#if !UNITY_ANDROID
+                // Disable PauseButton on PC
+                GameObject pauseButton = GameObject.FindGameObjectWithTag("PauseButton");
+                if (pauseButton != null)
+                    pauseButton.SetActive(false);
+#endif
             }
 
             if (levelMusic != null)
@@ -65,13 +79,16 @@ public class PauseManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 #else
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;            
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
 #endif
-            
-            // Hide all mobile UI controls except the pause button
-            HideMobileUIExceptPauseButton();
-            
+
+
+
+#if UNITY_ANDROID
+            HideMobileUI();
+#endif
+
             OnPause?.Invoke();
         }
         else
@@ -87,15 +104,17 @@ public class PauseManager : MonoBehaviour
                 levelMusic.UnPause();
 
 #if !UNITY_ANDROID
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 #else
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 #endif
             
             // Show all mobile UI controls
+#if UNITY_ANDROID
             ShowAllMobileUI();
+#endif
             
             OnUnpause?.Invoke();
         }
@@ -108,18 +127,12 @@ public class PauseManager : MonoBehaviour
     }
 
     // Hide all children of mobileUIControls except the pause button
-    private void HideMobileUIExceptPauseButton()
+    private void HideMobileUI()
     {
         if (mobileUIControls == null)
             return;
 
-        foreach (Transform child in mobileUIControls.transform)
-        {
-            if (child.CompareTag("PauseButton"))
-                child.gameObject.SetActive(true);
-            else
-                child.gameObject.SetActive(false);
-        }
+        mobileUIControls.SetActive(false);
     }
 
     // Show all children of mobileUIControls
@@ -128,9 +141,7 @@ public class PauseManager : MonoBehaviour
         if (mobileUIControls == null)
             return;
 
-        foreach (Transform child in mobileUIControls.transform)
-        {
-            child.gameObject.SetActive(true);
-        }
+        mobileUIControls.SetActive(true);
+        
     }
 }
