@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menuScene: 01_Menu
   gameplayScene: 02_Gameplay
-  gameOverScene: 03_GameOver
+  winScreen: 03_WinScreen
 --- !u!4 &36665337
 Transform:
   m_ObjectHideFlags: 0
@@ -183,6 +183,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   items: 
+  OnItemAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnItemRemoved:
+    m_PersistentCalls:
+      m_Calls: []
+  OnInventoryChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

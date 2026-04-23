@@ -1,4 +1,6 @@
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,7 +8,7 @@ public static class SaveSystem
 {
     private static string savePath = Path.Combine(Application.persistentDataPath, "savegame.json");
 
-    public static void SaveGame(Transform player, Transform scp173)
+    public static void SaveGame(Transform player, Transform scp173, List<InventoryItemType> inventory, List<string> pickedUpItems)
     {
         SaveData data = new SaveData();
 
@@ -26,6 +28,12 @@ public static class SaveSystem
             data.scp173Y = scp173.position.y;
             data.scp173Z = scp173.position.z;
         }
+
+        // Save inventory as list of ints (enum values)
+        data.inventoryItems = inventory.Select(item => (int)item).ToList();
+
+        //save IDs
+        data.pickedUpItemIDs = new List<string>(pickedUpItems);
 
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(savePath, json);

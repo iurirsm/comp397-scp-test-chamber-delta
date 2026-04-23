@@ -5,6 +5,7 @@ using UnityEngine;
 public class InventoryPickup : MonoBehaviour
 {
     [SerializeField] private InventoryItemType itemType;
+    [SerializeField] private string itemID; 
 
     private void OnTriggerEnter(Collider other)
     {
@@ -18,6 +19,18 @@ public class InventoryPickup : MonoBehaviour
         }
 
         SimpleInventory.Instance.AddItem(itemType);
+
+        //track this item
+        if (GameSaveManager.Instance != null && !string.IsNullOrEmpty(itemID))
+        {
+            GameSaveManager.Instance.RegisterPickedUpItem(itemID);
+        }
+
         Destroy(gameObject);
+    }
+
+    public string GetItemID()
+    {
+        return itemID;
     }
 }

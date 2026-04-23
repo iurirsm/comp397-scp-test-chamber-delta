@@ -58,4 +58,11 @@ public class SimpleInventory : MonoBehaviour
         return items;
     }
 
+    public void ClearInventory()
+    {
+        items.Clear();
+        Debug.Log("Inventory cleared.");
+        OnInventoryChanged?.Invoke();
+    }
+
 }

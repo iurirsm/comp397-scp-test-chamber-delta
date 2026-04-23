@@ -8,5 +8,6 @@ public enum InventoryItemType
     SCP178,   // 3D Glasses - reveal hidden things
     SCP198,   // Cup of Joe - speed/stamina boost
     SCP1025,   // Book - random bad/good effect later
-    Flashlight //flashligh - toggleable with F key
+    Flashlight, //flashligh - toggleable with F key
+    Key //key to open the main door to escape the asylum
 }

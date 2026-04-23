@@ -14,9 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/02_Gameplay.unity
     guid: 22e0d9d666aebb74e9ade0f33ba822d4
-  - enabled: 0
-    path: Assets/Scenes/03_GameOver.unity
-    guid: 2beabb609f8c9554c8c13c151af2b382
+  - enabled: 1
+    path: Assets/Scenes/03_WinScreen.unity
+    guid: f53db173892197043b6dd0366d282c3c
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: b72b1a40491eb0441955fb5b20647c9e, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 479c82d7b864e4f489905953ceb50ff2, type: 3}
