@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string menuScene = "01_Menu";
     [SerializeField] private string gameplayScene = "02_Gameplay";
     [SerializeField] private string winScreen = "03_WinScreen";
-
+    [SerializeField] private float fadeDuration = 1f; //fade to black
     public bool IsPaused { get; private set; }
 
     private void Awake()
@@ -61,10 +62,22 @@ public class GameManager : MonoBehaviour
 
     public void LoadWinScreen()
     {
+        StartCoroutine(LoadWinScreenWithFade());
+    }
+
+    private IEnumerator LoadWinScreenWithFade()
+    {
         Time.timeScale = 0f;
         IsPaused = true;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        if (ScreenFadeManager.Instance != null)
+        {
+            yield return StartCoroutine(ScreenFadeManager.Instance.FadeToBlackCoroutine(fadeDuration));
+        }
+
+        //load win scene after fade
         SceneManager.LoadScene(winScreen);
     }
 

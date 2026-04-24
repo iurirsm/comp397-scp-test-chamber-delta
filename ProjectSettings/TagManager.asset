@@ -6,6 +6,7 @@ TagManager:
   tags:
   - SCP173
   - PauseButton
+  - BottleWall
   layers:
   - Default
   - TransparentFX
