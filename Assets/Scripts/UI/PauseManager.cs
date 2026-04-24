@@ -1,25 +1,55 @@
 using UnityEngine;
-
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject minimap;
+    [SerializeField] private GameObject mobileUIControls; // Mobile UI container
     [SerializeField] private AudioSource levelMusic;
+
+    public UnityEvent OnPause;
+    public UnityEvent OnUnpause;
+
+    // Define pause action with Escape key binding
+    private InputAction pauseAction = new InputAction("Pause", InputActionType.Button,
+        binding: "<Keyboard>/escape");
 
     private bool isPaused;
 
-    void Update()
+    private void OnEnable()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            // If game over is visible, ignore pause input
-            if (gameOverPanel != null && gameOverPanel.activeSelf)
-                return;
+        // Enable the pause action
+        pauseAction.Enable();
+        // Subscribe to the press event
+        pauseAction.performed += OnPausePerformed;
+    }
 
-            TogglePause();
-        }
+    private void OnDisable()
+    {
+        // Unsubscribe from the press event
+        pauseAction.performed -= OnPausePerformed;
+        // Disable the pause action
+        pauseAction.Disable();
+    }
+
+    // Callback when Escape is pressed
+    private void OnPausePerformed(InputAction.CallbackContext ctx)
+    {
+        // If game over is visible, ignore pause input
+        if (gameOverPanel != null && gameOverPanel.activeSelf)
+            return;
+
+        // Defer to next frame to avoid Input System conflicts
+        StartCoroutine(TogglePauseNextFrame());
+    }
+
+    private System.Collections.IEnumerator TogglePauseNextFrame()
+    {
+        yield return null;
+        TogglePause();
     }
 
     private void TogglePause()
@@ -29,17 +59,37 @@ public class PauseManager : MonoBehaviour
         if (isPaused)
         {
             Time.timeScale = 0f;
-            if (pausePanel != null) 
+            if (pausePanel != null)
             {
                 pausePanel.SetActive(true);
                 minimap.SetActive(false);
+
+#if !UNITY_ANDROID
+                // Disable PauseButton on PC
+                GameObject pauseButton = GameObject.FindGameObjectWithTag("PauseButton");
+                if (pauseButton != null)
+                    pauseButton.SetActive(false);
+#endif
             }
 
             if (levelMusic != null)
                 levelMusic.Pause();
 
+#if !UNITY_ANDROID
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+#else
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+#endif
+
+
+
+#if UNITY_ANDROID
+            HideMobileUI();
+#endif
+
+            OnPause?.Invoke();
         }
         else
         {
@@ -53,20 +103,45 @@ public class PauseManager : MonoBehaviour
             if (levelMusic != null)
                 levelMusic.UnPause();
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+#if !UNITY_ANDROID
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+#else
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+#endif
+            
+            // Show all mobile UI controls
+#if UNITY_ANDROID
+            ShowAllMobileUI();
+#endif
+            
+            OnUnpause?.Invoke();
         }
     }
 
-
-    private void OnDisable()
+    private void OnDestroy()
     {
-        if (isPaused)
-        {
-            Time.timeScale = 1f;
-            if (pausePanel != null) pausePanel.SetActive(false);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        // Cleanup when script is destroyed
+        pauseAction.Dispose();
+    }
+
+    // Hide all children of mobileUIControls except the pause button
+    private void HideMobileUI()
+    {
+        if (mobileUIControls == null)
+            return;
+
+        mobileUIControls.SetActive(false);
+    }
+
+    // Show all children of mobileUIControls
+    private void ShowAllMobileUI()
+    {
+        if (mobileUIControls == null)
+            return;
+
+        mobileUIControls.SetActive(true);
+        
     }
 }

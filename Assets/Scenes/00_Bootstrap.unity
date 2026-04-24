@@ -96,8 +96,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: c60cff0afa117f24da53283c54c3d761, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 3bc554dc6a3ff754d969e9a5d9ee9f07, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -154,7 +154,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menuScene: 01_Menu
   gameplayScene: 02_Gameplay
-  gameOverScene: 03_GameOver
+  winScreen: 03_WinScreen
+  fadeDuration: 1
 --- !u!4 &36665337
 Transform:
   m_ObjectHideFlags: 0
@@ -183,6 +184,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   items: 
+  OnItemAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnItemRemoved:
+    m_PersistentCalls:
+      m_Calls: []
+  OnInventoryChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

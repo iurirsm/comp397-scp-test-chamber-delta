@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.AI;
 
 public class GameSaveManager : MonoBehaviour
@@ -10,6 +12,7 @@ public class GameSaveManager : MonoBehaviour
     private Transform player;
     private Transform scp173;
     private SaveData loadedData;
+    private HashSet<string> pickedUpItems = new HashSet<string>(); // Track picked up items
 
     private void Awake()
     {
@@ -23,6 +26,21 @@ public class GameSaveManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+    }
+
+    public void RegisterPickedUpItem(string itemID)
+    {
+        if (!string.IsNullOrEmpty(itemID))
+        {
+            pickedUpItems.Add(itemID);
+            Debug.Log("Registered picked up item: " + itemID);
+        }
+    }
+
+    public void ResetGameState()
+    {
+        pickedUpItems.Clear();
+        Debug.Log("Game state reset - picked up items cleared.");
     }
 
     public void SaveGame()
@@ -41,7 +59,14 @@ public class GameSaveManager : MonoBehaviour
             return;
         }
 
-        SaveSystem.SaveGame(player, scp173);
+        //get inventory from SimpleInventory
+        List<InventoryItemType> inventory = new List<InventoryItemType>();
+        if (SimpleInventory.Instance != null)
+        {
+            inventory = SimpleInventory.Instance.GetItems();
+        }
+
+        SaveSystem.SaveGame(player, scp173, inventory, pickedUpItems.ToList());
     }
 
     public void LoadGame()
@@ -85,7 +110,57 @@ public class GameSaveManager : MonoBehaviour
             RestoreScpPosition();
         }
 
+        RestoreInventory();
+
+        RemovePickedUpItems();
+
         loadedData = null;
+    }
+
+    private void RestoreInventory()
+    {
+        if (SimpleInventory.Instance == null)
+        {
+            Debug.LogError("SimpleInventory not found during load.");
+            return;
+        }
+
+        //clear current inventory
+        List<InventoryItemType> currentItems = new List<InventoryItemType>(SimpleInventory.Instance.GetItems());
+        foreach (var item in currentItems)
+        {
+            SimpleInventory.Instance.RemoveItem(item);
+        }
+
+        //restore saved inventory
+        foreach (int itemInt in loadedData.inventoryItems)
+        {
+            InventoryItemType item = (InventoryItemType)itemInt;
+            SimpleInventory.Instance.AddItem(item);
+        }
+
+        pickedUpItems.Clear();
+        foreach (string itemID in loadedData.pickedUpItemIDs)
+        {
+            pickedUpItems.Add(itemID);
+        }
+
+        Debug.Log("Inventory restored with " + loadedData.inventoryItems.Count + " items.");
+    }
+
+    private void RemovePickedUpItems()
+    {
+        InventoryPickup[] allPickups = FindObjectsOfType<InventoryPickup>();
+
+        foreach (InventoryPickup pickup in allPickups)
+        {
+            string itemID = pickup.GetItemID();
+            if (!string.IsNullOrEmpty(itemID) && pickedUpItems.Contains(itemID))
+            {
+                Debug.Log("Removing already picked up item: " + itemID);
+                Destroy(pickup.gameObject);
+            }
+        }
     }
 
     private void RestorePlayerPosition()

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class GameOverManager : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class GameOverManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject minimap;
+    [SerializeField] private GameObject mobileUIControls; // Mobile UI container
 
     [Header("Audio")]
     [SerializeField] private AudioSource sfxSource;   
@@ -15,6 +17,8 @@ public class GameOverManager : MonoBehaviour
 
     [Header("Scenes (optional)")]
     [SerializeField] private string mainMenuSceneName = "01_Menu";
+
+    public UnityEvent OnGameOver;
 
     private bool isGameOver;
 
@@ -44,9 +48,14 @@ public class GameOverManager : MonoBehaviour
         // Pause gameplay
         Time.timeScale = 0f;
 
-        // Cursor for WebGL/UI
+        // Cursor for WebGL/UI (not on Android)
+// #if !UNITY_ANDROID
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+// #else
+//         Cursor.lockState = CursorLockMode.None;
+//         Cursor.visible = true;
+// #endif
 
         // Show UI
         if (gameOverPanel != null)
@@ -54,6 +63,11 @@ public class GameOverManager : MonoBehaviour
             gameOverPanel.SetActive(true);
             minimap.SetActive(false);            
         }
+        
+        // Hide all mobile UI controls
+        HideAllMobileUI();
+        
+        OnGameOver?.Invoke();
             
     }
 
@@ -67,5 +81,14 @@ public class GameOverManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    // Hide all mobile UI controls
+    private void HideAllMobileUI()
+    {
+        if (mobileUIControls == null)
+            return;
+
+        mobileUIControls.SetActive(false);
     }
 }
